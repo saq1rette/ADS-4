@@ -1,4 +1,5 @@
 // Copyright 2021 NNTU-CS
+
 int countPairs1(int *arr, int len, int value) {
   int count = 0;
   for (int i = 0; i < len; i++) {
@@ -10,10 +11,12 @@ int countPairs1(int *arr, int len, int value) {
   }
   return count;
 }
+
 int countPairs2(int *arr, int len, int value) {
   int count = 0;
   int left = 0;
   int right = len - 1;
+  
   while (left < right) {
     int sum = arr[left] + arr[right];
     if (sum == value) {
@@ -22,19 +25,19 @@ int countPairs2(int *arr, int len, int value) {
         count += n * (n - 1) / 2;
         break;
       } else {
-        int left_count = 1;
-        int right_count = 1;
-        while (left + 1 < right && arr[left] == arr[left + 1]) {
+        int left_val = arr[left];
+        int right_val = arr[right];
+        int left_count = 0;
+        int right_count = 0;
+        while (left <= right && arr[left] == left_val) {
           left_count++;
           left++;
         }
-        while (right - 1 > left && arr[right] == arr[right - 1]) {
+        while (left <= right && arr[right] == right_val) {
           right_count++;
           right--;
         }
         count += left_count * right_count;
-        left++;
-        right--;
       }
     } else if (sum < value) {
       left++;
@@ -44,6 +47,7 @@ int countPairs2(int *arr, int len, int value) {
   }
   return count;
 }
+
 int binarySearch(int *arr, int left, int right, int target) {
   while (left <= right) {
     int mid = left + (right - left) / 2;
@@ -57,24 +61,24 @@ int binarySearch(int *arr, int left, int right, int target) {
   }
   return -1;
 }
+
 int countPairs3(int *arr, int len, int value) {
   int count = 0;
   for (int i = 0; i < len; i++) {
     int target = value - arr[i];
-    int index = binarySearch(arr, i + 1, len - 1, target);
-    if (index != -1) {
-      count++;
-      int j = index + 1;
-      while (j < len && arr[j] == target) {
-        count++;
-        j++;
+    int first = binarySearch(arr, i + 1, len - 1, target);
+    if (first != -1) {
+      int left_bound = first;
+      int right_bound = first;
+      while (left_bound - 1 > i && arr[left_bound - 1] == target) {
+        left_bound--;
       }
-      j = index - 1;
-      while (j > i && arr[j] == target) {
-        count++;
-        j--;
+      while (right_bound + 1 < len && arr[right_bound + 1] == target) {
+        right_bound++;
       }
+      count += (right_bound - left_bound + 1);
+      i = right_bound;
     }
   }
-  return count / 2;
+  return count;
 }
